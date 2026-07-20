@@ -160,6 +160,63 @@ a { color: inherit; text-decoration: none; }
   z-index: 3;
 }
 
+/* ---------- Gallery (写真が流れる帯) ---------- */
+
+.gallery {
+  position: relative;
+  overflow: hidden;
+  background: var(--ai-deep);
+  padding: 2.25rem 0;
+}
+
+/* 左右の端をふわっと暗く消して、途切れ感をなくす */
+.gallery::before,
+.gallery::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6rem;
+  z-index: 2;
+  pointer-events: none;
+}
+.gallery::before {
+  left: 0;
+  background: linear-gradient(to right, var(--ai-deep), transparent);
+}
+.gallery::after {
+  right: 0;
+  background: linear-gradient(to left, var(--ai-deep), transparent);
+}
+
+.gallery__track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: gallery-scroll 32s linear infinite;
+}
+
+.gallery__track img {
+  height: 220px;
+  width: auto;
+  border-radius: 6px;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* 画像を半分ぶん左へ動かすと、複製した後半と自然につながる */
+@keyframes gallery-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* マウスを乗せている間は止めて、写真をゆっくり見られるように */
+.gallery:hover .gallery__track,
+.gallery:focus-within .gallery__track {
+  animation-play-state: paused;
+}
+
 /* ---------- Sections (shared) ---------- */
 
 .section {
@@ -358,6 +415,12 @@ a { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .lantern { animation: none; }
   html { scroll-behavior: auto; }
+  .gallery__track {
+    animation: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .gallery__track img { scroll-snap-align: start; }
 }
 
 /* ---------- Mobile ---------- */
